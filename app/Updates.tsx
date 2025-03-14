@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { FC, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -7,24 +10,35 @@ import {
   FaFacebookSquare,
   FaLinkedin,
 } from "react-icons/fa";
+import { fetchEventsData } from "./retrieveEvents";
 
 interface UpdatesPageProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const updates = [
-  {
-    id: 1,
-    name: "Sunshine's New Website",
-    href: "/developers",
-    description:
-      "We are pleased to announce the completion of Sunshine IITH new website development.",
-    date: "February 1, 2024",
-  },
-];
-
 const UpdatesPage: FC<UpdatesPageProps> = ({ isOpen, onClose }) => {
+  const [updates, setUpdates] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchEventsData();
+      setUpdates(
+        data || [
+          {
+            id: 1,
+            name: "Unable to fetch",
+            description: "Sunshine",
+            date: "2021-10-10",
+            href: "https://sunshine.iith.ac.in",
+          },
+        ]
+      );
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <Transition.Root show={isOpen} as={Dialog} onClose={onClose}>
       <Transition.Child
